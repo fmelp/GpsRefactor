@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.franmelp.golfgpsrefactor.HoleVizEleven"
+    android:background="@android:color/holo_green_dark">
+
+    <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
+    <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingTop="@dimen/activity_vertical_margin"-->
+
+    <View
+        android:id="@+id/elevenCenterShim"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"/>
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/hole11_rimpicc"
+        android:id="@+id/elevenHolePic"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/elevenCenterShim"
+        />
+
+    <!--<Button-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/elevenNextButton"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_below="@id/elevenCenterShim"-->
+    <!--android:text="NEXT->"/>-->
+    <!--<Button-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/elevenPrevButton"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_below="@id/elevenCenterShim"-->
+    <!--android:layout_toLeftOf="@id/elevenNextButton"-->
+    <!--android:text="<-PREVIOUS"/>-->
+
+    <LinearLayout
+        android:id="@+id/elevenDistances"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/elevenHolePic"
+        android:layout_toRightOf="@+id/elevenCenterShim"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/elevenHolePic"
+            android:text="TO GREEN:"
+            android:textStyle="bold|italic"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/elevenHolePic"
+            android:textStyle="bold"
+            android:id="@+id/elevenFront"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/elevenFront"
+            android:textStyle="bold"
+            android:id="@+id/elevenBack"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HAZARDS:"
+            android:textStyle="bold|italic"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/elevenBack"
+            android:id="@+id/elevenHazOne"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/elevenHolePic"
+            android:text="FROM TEE:"
+            android:textStyle="bold|italic"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/elevenHazOne"
+            android:id="@+id/elevenFromWhite"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/elevenFromWhite"
+            android:id="@+id/elevenFromYellow"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PREV"
+                android:id="@+id/elevenPrev"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEXT"
+                android:id="@+id/elevenNext"
+                />
+
+
+        </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Main Menu"
+            android:id="@+id/elevenMainMenu"
+            />
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

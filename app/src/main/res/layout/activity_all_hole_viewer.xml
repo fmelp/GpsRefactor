@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/allHoleHolder"
+        tools:context="com.franmelp.golfgpsrefactor.AllHoleViewer">
+
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hole One"
+            android:id="@+id/buttonOne"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonOne"
+            android:text="Hole Two"
+            android:id="@+id/buttonTwo"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonTwo"
+            android:text="Hole Three"
+            android:id="@+id/buttonThree"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonThree"
+            android:text="Hole Four"
+            android:id="@+id/buttonFour"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonFour"
+            android:text="Hole Five"
+            android:id="@+id/buttonFive"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonFive"
+            android:text="Hole Six"
+            android:id="@+id/buttonSix"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonSix"
+            android:text="Hole Seven"
+            android:id="@+id/buttonSeven"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonSeven"
+            android:text="Hole Eight"
+            android:id="@+id/buttonEight"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonEight"
+            android:text="Hole Nine"
+            android:id="@+id/buttonNine"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonNine"
+            android:text="Hole Ten"
+            android:id="@+id/buttonTen"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonTen"
+            android:text="Hole Eleven"
+            android:id="@+id/buttonEleven"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonEleven"
+            android:text="Hole Twelve"
+            android:id="@+id/buttonTwelve"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonTwelve"
+            android:text="Hole Thirteen"
+            android:id="@+id/buttonThirteen"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonThirteen"
+            android:text="Hole Fourteen"
+            android:id="@+id/buttonFourteen"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonFourteen"
+            android:text="Hole Fifteen"
+            android:id="@+id/buttonFifteen"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonFifteen"
+            android:text="Hole Sixteen"
+            android:id="@+id/buttonSixteen"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonSixteen"
+            android:text="Hole Seventeen"
+            android:id="@+id/buttonSeventeen"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonSeventeen"
+            android:text="Hole Eighteen"
+            android:id="@+id/buttonEigtheen"
+            />
+    </LinearLayout>
+</ScrollView>

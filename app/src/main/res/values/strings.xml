@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GPS SDG</string>
+    <string name="title_activity_hole_viz_one">HoleVizOne</string>
+    <string name="title_activity_hole_viz_two">HoleVizTwo</string>
+</resources>
