@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -65,6 +67,10 @@ public class HoleViz extends AppCompatActivity {
             holeIdx = holeNum - 1;
         }
 
+        //text size for tablet
+        float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                18F, this.getApplicationContext().getResources().getDisplayMetrics());
+
         //relative layout to hold everything together
         RelativeLayout frame = new RelativeLayout(context);
         frame.setLayoutParams(new LinearLayout.LayoutParams(
@@ -72,6 +78,8 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT));
         int color = Integer.parseInt("32cd32", 16)+0xFF000000;
         frame.setBackgroundColor(color);
+
+
 
         // SHIM to align hole pic to left and rest to right
         View shim = new View(context);
@@ -83,6 +91,84 @@ public class HoleViz extends AppCompatActivity {
         shim.setLayoutParams(shimParams);
         shim.setId(shim.generateViewId());
         frame.addView(shim);
+
+//        //load header
+        ///...right now this sits on top of everything
+//        ImageView holeHeader = new ImageView(context);
+//        loadBitmap(holeHeader, context, R.drawable.hole1_header);
+//        RelativeLayout.LayoutParams headerParams = new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.MATCH_PARENT,
+//                RelativeLayout.LayoutParams.WRAP_CONTENT);
+////        headerParams.addRule(RelativeLayout.ALIGN_RIGHT, shim.getId());
+//        holeHeader.setLayoutParams(headerParams);
+//        holeHeader.setVisibility(View.VISIBLE);
+//        holeHeader.setId(holeHeader.generateViewId());
+//        frame.addView(holeHeader);
+
+        //custom header
+        LinearLayout headerHolder = new LinearLayout(context);
+                RelativeLayout.LayoutParams headerParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        headerHolder.setLayoutParams(headerParams);
+        headerHolder.setId(headerHolder.generateViewId());
+        headerHolder.setGravity(Gravity.CENTER);
+        headerHolder.setOrientation(LinearLayout.VERTICAL);
+        headerHolder.setBackgroundColor(Color.GRAY);
+        frame.addView(headerHolder);
+
+        //par, hole num, handicap holder
+        LinearLayout detailHolder = new LinearLayout(context);
+        RelativeLayout.LayoutParams detailParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        detailHolder.setLayoutParams(detailParams);
+        detailHolder.setGravity(Gravity.CENTER);
+        detailHolder.setOrientation(LinearLayout.HORIZONTAL);
+        headerHolder.addView(detailHolder);
+
+        //par
+        TextView parText = setupTextView("PAR 4          ", Color.RED, myTextSize+10);
+        detailHolder.addView(parText);
+
+        //hole num
+        TextView holeNumText = setupTextView("1", Color.RED, myTextSize+40);
+        holeNumText.setTypeface(null, Typeface.BOLD);
+        detailHolder.addView(holeNumText);
+
+        //handicap
+        TextView handicapText = setupTextView("           HCP 4", Color.RED, myTextSize+10);
+        detailHolder.addView(handicapText);
+
+        //meters from tee holder
+        LinearLayout metersHolder = new LinearLayout(context);
+        RelativeLayout.LayoutParams metersParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        metersHolder.setLayoutParams(metersParams);
+        metersHolder.setGravity(Gravity.CENTER);
+        metersHolder.setOrientation(LinearLayout.HORIZONTAL);
+        headerHolder.addView(metersHolder);
+
+        //m white
+        TextView whiteText = setupTextView("368m         ", Color.WHITE, myTextSize-10);
+        metersHolder.addView(whiteText);
+
+        //m white
+        TextView yelText = setupTextView("340m         ", Color.YELLOW, myTextSize-10);
+        metersHolder.addView(yelText);
+
+        //m white
+        TextView blackText = setupTextView("314m         ", Color.BLACK, myTextSize-10);
+        metersHolder.addView(blackText);
+
+        //m white
+        TextView redText = setupTextView("288m", Color.RED, myTextSize-10);
+        metersHolder.addView(redText);
+
+
+
+
 
         //load hole pic
         holePic = new ImageView(context);
@@ -98,8 +184,10 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         holePicParams.addRule(RelativeLayout.ALIGN_RIGHT, shim.getId());
+        holePicParams.addRule(RelativeLayout.BELOW, headerHolder.getId());
         holePic.setLayoutParams(holePicParams);
         holePic.setVisibility(View.VISIBLE);
+//        holePic.setScaleType(ImageView.ScaleType.FIT_XY);
         frame.addView(holePic);
 
         //Linear Layout to hold text
@@ -108,6 +196,7 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         textParentParams.addRule(RelativeLayout.ALIGN_LEFT, shim.getId());
+        textParentParams.addRule(RelativeLayout.BELOW, headerHolder.getId());
         textParent.setLayoutParams(textParentParams);
         textParent.setOrientation(LinearLayout.VERTICAL);
         frame.addView(textParent);
@@ -120,8 +209,6 @@ public class HoleViz extends AppCompatActivity {
         //set distance TextViews
         //and also locations in same loop
         latLongsHole = Model.LAT_LONGS.get(holeIdx);
-        float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-                18F, this.getApplicationContext().getResources().getDisplayMetrics());
         int size = latLongsHole.size();
         int numHazards = (size - 8) / 2;
         hazTexts = new ArrayList<>(numHazards);
@@ -248,7 +335,7 @@ public class HoleViz extends AppCompatActivity {
                 }
             });
             //if it is no going forward
-        }else prevButton.setEnabled(false);
+        }else nextButton.setEnabled(false);
 
         //main menu button
         Button mainMenuButton = new Button(context);
@@ -290,6 +377,13 @@ public class HoleViz extends AppCompatActivity {
 //        }catch(SecurityException e){
 //
 //        }
+
+    }
+
+    @Override
+    protected  void onStop(){
+        super.onStop();
+        //free up image resource space
         Drawable drawable = holePic.getDrawable(); // declare this ImageView Globally
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;

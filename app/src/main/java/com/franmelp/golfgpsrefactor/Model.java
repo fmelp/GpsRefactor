@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by francescomelpignano on 01/02/16.
@@ -23,14 +24,18 @@ public class Model {
     public static ArrayList<Integer> HOLE_IMAGE_REFS;
     public static boolean METERS;
     private static Context context;
+    public static  ArrayList<ArrayList<Integer>> HEADER_DETAILS;
 
 
-    public Model(String fileName, Context contextIn) {
+    public Model(String fileNameOne, Context contextIn) {
+        //add second file name
+        //fill in header details by reading from hole_details.txt
         METERS = true;
         context = contextIn;
         HOLE_IMAGE_REFS = makeImageRefs();
         AssetManager mgr = context.getResources().getAssets();
-        LAT_LONGS = readAsset(mgr, fileName);
+        LAT_LONGS = readAsset(mgr, fileNameOne);
+        HEADER_DETAILS = new ArrayList<ArrayList<Integer>>(18);
 
     }
 
@@ -46,6 +51,11 @@ public class Model {
         }
         return imageRefs;
     }
+
+//    private static ArrayList<ArrayList<Integer>> makeHeaderDetails(){
+    //read from hole_details.txt
+//
+//    }
 
 
 
