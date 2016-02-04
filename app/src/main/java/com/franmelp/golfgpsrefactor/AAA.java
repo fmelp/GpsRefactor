@@ -36,7 +36,7 @@ public class AAA extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent start = new Intent(AAA.this, AAA.class);
-                start.putExtra("key", 1);
+                start.putExtra("key", 2);
                 startActivity(start);
                 finish();
 

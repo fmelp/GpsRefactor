@@ -39,6 +39,7 @@ public class Model {
         for (int i = 0 ; i < 18; i++){
             int holeNum = i + 1;
             String fileName = "hole" + holeNum + "_rimpicc";
+//            String fileName = "hole_" + holeNum;
             int holeId = context.getResources().getIdentifier(
                     fileName, "drawable", context.getPackageName());
             imageRefs.add(holeId);

@@ -7,7 +7,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="SDG GPS v2"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".HomeScreenActivity">
@@ -71,12 +71,13 @@
             android:name=".HoleVizSeventeen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".HoleVizEighteen"
+            android:name=".HoleViz"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AllHoleViewer" />
-        <activity android:name=".LoadHolePic" />
         <activity android:name=".AAA" />
-        <activity android:name=".HoleViz"></activity>
+        <activity android:name=".HoleVizEighteen">
+
+        </activity>
     </application>
 
 </manifest>
