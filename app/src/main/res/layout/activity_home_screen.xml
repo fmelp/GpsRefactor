@@ -17,8 +17,44 @@
         <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
         <!--android:paddingTop="@dimen/activity_vertical_margin"-->
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/selectText"/>
 
 
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioG">
+            <RadioButton
+                android:id="@+id/radio0"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:background="@drawable/yourbuttonbackground"
+                android:button="@android:color/transparent"
+                android:checked="true"
+                android:text="RadioButton1" />
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:background="@drawable/yourbuttonbackground"
+                android:button="@android:color/transparent"
+                android:checked="false"
+                android:text="RadioButton2" />
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/selection"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/playingOptionsText"/>
 
         <Button
             android:layout_width="match_parent"
@@ -40,6 +76,8 @@
             android:text="Select Hole"
             android:id="@+id/allHoleViewerButton"
             />
+
+
 
     </LinearLayout>
 </ScrollView>

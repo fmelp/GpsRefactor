@@ -3,6 +3,7 @@ package com.franmelp.golfgpsrefactor;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
+import android.renderscript.ScriptGroup;
 import android.widget.ArrayAdapter;
 
 import java.io.BufferedReader;
@@ -24,20 +25,21 @@ public class Model {
     public static ArrayList<Integer> HOLE_IMAGE_REFS;
     public static boolean METERS;
     private static Context context;
-    public static  ArrayList<ArrayList<Integer>> HEADER_DETAILS;
+    public static  ArrayList<String[]> HEADER_DETAILS;
 
 
-    public Model(String fileNameOne, Context contextIn) {
+    public Model(String fileNameLatLong, String fileNameHeaderDetails, Context contextIn) {
         //add second file name
         //fill in header details by reading from hole_details.txt
         METERS = true;
         context = contextIn;
         HOLE_IMAGE_REFS = makeImageRefs();
         AssetManager mgr = context.getResources().getAssets();
-        LAT_LONGS = readAsset(mgr, fileNameOne);
-        HEADER_DETAILS = new ArrayList<ArrayList<Integer>>(18);
-
+        LAT_LONGS = readAsset(mgr, fileNameLatLong);
+        HEADER_DETAILS = makeHeaderDetails(mgr, fileNameHeaderDetails);
     }
+
+
 
     private static ArrayList<Integer> makeImageRefs(){
         ArrayList<Integer> imageRefs = new ArrayList<Integer>(18);
@@ -52,10 +54,40 @@ public class Model {
         return imageRefs;
     }
 
-//    private static ArrayList<ArrayList<Integer>> makeHeaderDetails(){
+    private static ArrayList<String[]> makeHeaderDetails(AssetManager mgr, String path){
     //read from hole_details.txt
-//
-//    }
+        // hole_number, par, handicap, white_tee, yel_tee, black_tee, red_tee
+        InputStream is = null;
+        BufferedReader reader = null;
+        ArrayList<String[]> detailsHoles = new ArrayList<>(18);
+        int i = 0;
+        try{
+            is = mgr.open(path);
+            reader = new BufferedReader(new InputStreamReader(is));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] detailHole = line.split(",");
+                detailsHoles.add(i, detailHole);
+                i++;
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        return detailsHoles;
+    }
 
 
 

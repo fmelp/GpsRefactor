@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,8 +15,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,6 +55,12 @@ public class HoleViz extends AppCompatActivity {
     Location toFrontLoc;
     Location toBackLoc;
 
+    RelativeLayout frame;
+
+    boolean meters;
+
+    private GestureDetector gestureDetector;
+
     private LocationManager locationManager;
     private Location currentLocation;
     private LocationListener locationListener;
@@ -58,7 +69,9 @@ public class HoleViz extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
-//        setContentView(R.layout.activity_hole_viz);
+
+        //check if it's in meters or yards
+        meters = Model.METERS;
 
         //figure out what hole it is
         Bundle b = getIntent().getExtras();
@@ -67,16 +80,156 @@ public class HoleViz extends AppCompatActivity {
             holeIdx = holeNum - 1;
         }
 
+        //use this instead of setContentView
+        //couldn't use xml bc of regeneration for every hole
+        setupView();
+
+        //set up swipe gestures
+        //left == prev hole
+        //right == next hole
+        setupLeftRightSwipe();
+
+
+        //init location manager
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        //location listener
+        locationListener = new LocationListener() {
+
+            public void onLocationChanged(Location location) {
+                currentLocation = location;
+//                //hazOne
+//                String distHazOne = "1. " + calcDistance(hazOneLoc);
+//                hazOneText.setText(distHazOne);
+
+                //handle all hazards
+                for (int i = 0; i < hazLocs.size(); i++){
+                    int hazNum = i+1;
+                    String distHaz = hazNum + ". " + calcDistance(hazLocs.get(i), meters);
+                    hazTexts.get(i).setText(distHaz);
+                }
+
+                //frontGreen
+                String distFront = "front: " + calcDistance(toFrontLoc, meters);
+                toFrontText.setText(distFront);
+                //backGreen
+                String distBack = "back: " + calcDistance(toBackLoc, meters);
+                toBackText.setText(distBack);
+                //white tee
+                String distWhite = "white: " + calcDistance(fromWhiteLoc, meters);
+                fromWhiteText.setText(distWhite);
+                //yellow tee
+                String distYel = "yellow: " + calcDistance(fromYelLoc, meters);
+                fromYelText.setText(distYel);
+
+
+            }
+            public void onStatusChanged(String provider, int status,
+                                        Bundle extras) {
+                // NA
+            }
+            public void onProviderEnabled(String provider) {
+                // NA
+            }
+            public void onProviderDisabled(String provider) {
+                // NA
+            }
+        };
+
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        locationManager.getProvider(LocationManager.GPS_PROVIDER);
+        try{
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    500, 1, locationListener);
+
+        }catch(SecurityException e){
+
+        }
+        //see if meters was updated
+        meters = Model.METERS;
+
+        //reload image
+        loadBitmap(holePic, context, Model.HOLE_IMAGE_REFS.get(holeIdx));
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        try{
+            locationManager.removeUpdates(locationListener);
+
+        }catch(SecurityException e){
+
+        }
+
+    }
+
+    @Override
+    protected  void onStop(){
+        super.onStop();
+//        free up image resource space
+        Drawable drawable = holePic.getDrawable(); // declare this ImageView Globally
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            bitmap.recycle();
+            //next line makes app crash every time
+//            holePic.setImageBitmap(null);  // edited
+        }
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            if (bitmap != null && !bitmap.isRecycled()){
+                bitmap.recycle();
+            }
+
+//            next line makes app crash every time
+            holePic.setImageBitmap(null);  // edited
+        }
+    }
+
+    private TextView setupTextView(String s, int color, float textSize){
+        TextView text = new TextView(context);
+        text.setText(s);
+        text.setTextColor(color);
+        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        return text;
+    }
+
+    private Location setupLocation(Double lat, Double lng){
+        Location loc = new Location("");
+        loc.setLatitude(lat);
+        loc.setLongitude(lng);
+        return loc;
+    }
+
+    private void loadBitmap(ImageView imageView, Context context, int resId){
+        LoadHolePic loadPicTask = new LoadHolePic(imageView, context);
+        loadPicTask.execute(resId);
+    }
+
+    private void setupView(){
+
         //text size for tablet
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, this.getApplicationContext().getResources().getDisplayMetrics());
 
         //relative layout to hold everything together
-        RelativeLayout frame = new RelativeLayout(context);
+        frame = new RelativeLayout(context);
         frame.setLayoutParams(new LinearLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT));
-        int color = Integer.parseInt("32cd32", 16)+0xFF000000;
+//        int color = Integer.parseInt("32cd32", 16)+0xFF000000;
+//        int color = Integer.parseInt("1B5E20", 16) + 0xFF000000;
+        int color = Integer.parseInt("2E7D32", 16) + 0xFF000000;
+        frame.setId(frame.generateViewId());
         frame.setBackgroundColor(color);
 
 
@@ -92,22 +245,9 @@ public class HoleViz extends AppCompatActivity {
         shim.setId(shim.generateViewId());
         frame.addView(shim);
 
-//        //load header
-        ///...right now this sits on top of everything
-//        ImageView holeHeader = new ImageView(context);
-//        loadBitmap(holeHeader, context, R.drawable.hole1_header);
-//        RelativeLayout.LayoutParams headerParams = new RelativeLayout.LayoutParams(
-//                RelativeLayout.LayoutParams.MATCH_PARENT,
-//                RelativeLayout.LayoutParams.WRAP_CONTENT);
-////        headerParams.addRule(RelativeLayout.ALIGN_RIGHT, shim.getId());
-//        holeHeader.setLayoutParams(headerParams);
-//        holeHeader.setVisibility(View.VISIBLE);
-//        holeHeader.setId(holeHeader.generateViewId());
-//        frame.addView(holeHeader);
-
         //custom header
         LinearLayout headerHolder = new LinearLayout(context);
-                RelativeLayout.LayoutParams headerParams = new RelativeLayout.LayoutParams(
+        RelativeLayout.LayoutParams headerParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         headerHolder.setLayoutParams(headerParams);
@@ -127,17 +267,47 @@ public class HoleViz extends AppCompatActivity {
         detailHolder.setOrientation(LinearLayout.HORIZONTAL);
         headerHolder.addView(detailHolder);
 
+        //hole details String[] : hole_num, par, handicap, w, y, b, r
+        String[] holeDetails = Model.HEADER_DETAILS.get(holeIdx);
+        String holeNum = holeDetails[0];
+        String par = holeDetails[1];
+        String hcp = holeDetails[2];
+        String wt = "";
+        String yt = "";
+        String bt = "";
+        String rt = "";
+        if (meters){
+            wt = holeDetails[3] + "m";
+            yt = holeDetails[4] + "m";
+            bt = holeDetails[5] + "m";
+            rt = holeDetails[6] + "m";
+        }else{
+            //convert to yards if meters is false
+            int wtM = Integer.parseInt(holeDetails[3].replaceAll("\\s+",""));
+            wt = Integer.toString((int) ((wtM / 0.9144) + 0.5)) + "y";
+            int ytM = Integer.parseInt(holeDetails[4].replaceAll("\\s+",""));
+            yt = Integer.toString((int) ((ytM / 0.9144) + 0.5)) + "y";
+            int btM = Integer.parseInt(holeDetails[5].replaceAll("\\s+",""));
+            bt = Integer.toString((int) ((btM / 0.9144) + 0.5)) + "y";
+            int rtM = Integer.parseInt(holeDetails[6].replaceAll("\\s+",""));
+            rt = Integer.toString((int) ((rtM / 0.9144) + 0.5)) + "y";
+        }
+
+
         //par
-        TextView parText = setupTextView("PAR 4          ", Color.RED, myTextSize+10);
+        TextView parText = setupTextView("PAR" + par + "           ",
+                Color.RED, myTextSize+10);
         detailHolder.addView(parText);
 
         //hole num
-        TextView holeNumText = setupTextView("1", Color.RED, myTextSize+40);
+        TextView holeNumText = setupTextView(holeNum,
+                Color.RED, myTextSize+40);
         holeNumText.setTypeface(null, Typeface.BOLD);
         detailHolder.addView(holeNumText);
 
         //handicap
-        TextView handicapText = setupTextView("           HCP 4", Color.RED, myTextSize+10);
+        TextView handicapText = setupTextView("           HCP " + hcp,
+                Color.RED, myTextSize+10);
         detailHolder.addView(handicapText);
 
         //meters from tee holder
@@ -151,19 +321,19 @@ public class HoleViz extends AppCompatActivity {
         headerHolder.addView(metersHolder);
 
         //m white
-        TextView whiteText = setupTextView("368m         ", Color.WHITE, myTextSize-10);
+        TextView whiteText = setupTextView(wt + "         ", Color.WHITE, myTextSize-10);
         metersHolder.addView(whiteText);
 
         //m white
-        TextView yelText = setupTextView("340m         ", Color.YELLOW, myTextSize-10);
+        TextView yelText = setupTextView(yt + "         ", Color.YELLOW, myTextSize-10);
         metersHolder.addView(yelText);
 
         //m white
-        TextView blackText = setupTextView("314m         ", Color.BLACK, myTextSize-10);
+        TextView blackText = setupTextView(bt + "         ", Color.BLACK, myTextSize-10);
         metersHolder.addView(blackText);
 
         //m white
-        TextView redText = setupTextView("288m", Color.RED, myTextSize-10);
+        TextView redText = setupTextView(rt, Color.RED, myTextSize-10);
         metersHolder.addView(redText);
 
 
@@ -190,6 +360,22 @@ public class HoleViz extends AppCompatActivity {
 //        holePic.setScaleType(ImageView.ScaleType.FIT_XY);
         frame.addView(holePic);
 
+        Display display = getWindowManager().getDefaultDisplay();
+        Point sze = new Point();
+        display.getSize(sze);
+        int height = sze.y;
+
+        //Relative Layout for right side of screen
+        RelativeLayout rightFrame = new RelativeLayout(context);
+        RelativeLayout.LayoutParams rightFrameParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        rightFrameParams.addRule(RelativeLayout.ALIGN_LEFT, shim.getId());
+        rightFrameParams.addRule(RelativeLayout.BELOW, headerHolder.getId());
+        rightFrame.setLayoutParams(rightFrameParams);
+        frame.addView(rightFrame);
+
+
         //Linear Layout to hold text
         LinearLayout textParent = new LinearLayout(context);
         RelativeLayout.LayoutParams textParentParams = new RelativeLayout.LayoutParams(
@@ -197,9 +383,11 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         textParentParams.addRule(RelativeLayout.ALIGN_LEFT, shim.getId());
         textParentParams.addRule(RelativeLayout.BELOW, headerHolder.getId());
+
         textParent.setLayoutParams(textParentParams);
         textParent.setOrientation(LinearLayout.VERTICAL);
-        frame.addView(textParent);
+
+        rightFrame.addView(textParent);
 
 //        TextView tv = new TextView(context);
 //        tv.setText("from tee");
@@ -283,6 +471,51 @@ public class HoleViz extends AppCompatActivity {
             }
         }
 
+
+        //helper relative layout to keep buttons at bottom right of screen
+        //had to use this bc impossible to
+        // stretch textParent linear layout to bottom of screen
+        RelativeLayout allButtonsBottomHolder = new RelativeLayout(context);
+        RelativeLayout.LayoutParams allButtonsBottomHolderParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        allButtonsBottomHolderParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        allButtonsBottomHolder.setLayoutParams(allButtonsBottomHolderParams);
+        rightFrame.addView(allButtonsBottomHolder);
+
+        //set up vertical linear layout to hold all buttons
+        // [main  menu]
+        // [prev][next]
+        LinearLayout allButtonsLinear = new LinearLayout(context);
+        allButtonsLinear.setLayoutParams(new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT));
+        allButtonsLinear.setOrientation(LinearLayout.VERTICAL);
+        allButtonsBottomHolder.addView(allButtonsLinear);
+
+
+
+        //main menu button
+        //to be above next and prev buttons
+        Button mainMenuButton = new Button(context);
+        mainMenuButton.setText("MAIN MENU");
+        mainMenuButton.setTextSize(myTextSize + 10);
+        RelativeLayout.LayoutParams mainMenuButtonParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        allButtonsLinear.addView(mainMenuButton);
+        mainMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToMainMenu = new Intent(HoleViz.this, HomeScreenActivity.class);
+                startActivity(goToMainMenu);
+            }
+        });
+
+        //empty text view to make space inbetween main and prev/next buttons
+        TextView space = setupTextView("", Color.BLACK, 15);
+        allButtonsLinear.addView(space);
+
         //set up horiz linear layout for prev and next buttons
         LinearLayout buttonHolder = new LinearLayout(context);
         buttonHolder.setLayoutParams(new RelativeLayout.LayoutParams(
@@ -290,7 +523,9 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
         buttonHolder.setOrientation(LinearLayout.HORIZONTAL);
         buttonHolder.setWeightSum(2);
-        textParent.addView(buttonHolder);
+        buttonHolder.setId(buttonHolder.generateViewId());
+        allButtonsLinear.addView(buttonHolder);
+
 
         //button params to make them take up right amount of screen
         LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
@@ -300,7 +535,7 @@ public class HoleViz extends AppCompatActivity {
         //Prev button
         Button prevButton = new Button(context);
         prevButton.setText("PREV");
-        prevButton.setTextSize(myTextSize);
+        prevButton.setTextSize(myTextSize+20);
         prevButton.setLayoutParams(buttonParams);
         buttonHolder.addView(prevButton);
         //check it's not the 1st
@@ -308,10 +543,12 @@ public class HoleViz extends AppCompatActivity {
             prevButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent goToPrevHole = new Intent(HoleViz.this, HoleViz.class);
-                    goToPrevHole.putExtra("hole_num", holeIdx);
-                    startActivity(goToPrevHole);
-                    finish();
+//                    Intent goToPrevHole = new Intent(HoleViz.this, HoleViz.class);
+//                    goToPrevHole.putExtra("hole_num", holeIdx);
+////                    goToPrevHole.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(goToPrevHole);
+//                    finish();
+                    goToPrevHole();
                 }
             });
             //if it is the 1st no going back
@@ -320,7 +557,7 @@ public class HoleViz extends AppCompatActivity {
         //next button
         Button nextButton = new Button(context);
         nextButton.setText("NEXT");
-        nextButton.setTextSize(myTextSize);
+        nextButton.setTextSize(myTextSize+20);
         nextButton.setLayoutParams(buttonParams);
         buttonHolder.addView(nextButton);
         //check its not the 18th
@@ -328,89 +565,90 @@ public class HoleViz extends AppCompatActivity {
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent goToNextHole = new Intent(HoleViz.this, HoleViz.class);
-                    goToNextHole.putExtra("hole_num", holeIdx + 2);
-                    startActivity(goToNextHole);
-                    finish();
+//                    Intent goToNextHole = new Intent(HoleViz.this, HoleViz.class);
+//                    goToNextHole.putExtra("hole_num", holeIdx + 2);
+////                    goToNextHole.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(goToNextHole);
+//                    finish();
+                    goToNextHole();
                 }
             });
             //if it is no going forward
         }else nextButton.setEnabled(false);
 
-        //main menu button
-        Button mainMenuButton = new Button(context);
-        mainMenuButton.setText("MAIN MENU");
-        mainMenuButton.setTextSize(myTextSize);
-        textParent.addView(mainMenuButton);
-        mainMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent goToMainMenu = new Intent(HoleViz.this, HomeScreenActivity.class);
-                startActivity(goToMainMenu);
-            }
-        });
 
         //finally puts all the layouts in main view
         setContentView(frame);
     }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-//        locationManager.getProvider(LocationManager.GPS_PROVIDER);
-//        try{
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//                    500, 1, locationListener);
-//
-//        }catch(SecurityException e){
-//
-//        }
+    private void goToPrevHole(){
+        Intent goToPrevHole = new Intent(HoleViz.this, HoleViz.class);
+        goToPrevHole.putExtra("hole_num", holeIdx);
+        startActivity(goToPrevHole);
+        finish();
     }
 
-    @Override
-    protected void onPause(){
-        super.onPause();
+    private void goToNextHole(){
+        Intent goToNextHole = new Intent(HoleViz.this, HoleViz.class);
+        goToNextHole.putExtra("hole_num", holeIdx + 2);
+        startActivity(goToNextHole);
+        finish();
+    }
 
-//        try{
-//            locationManager.removeUpdates(locationListener);
-//
-//        }catch(SecurityException e){
-//
-//        }
+    private void setupLeftRightSwipe(){
+        frame.setOnTouchListener(new View.OnTouchListener() {
+
+            int downX, upX;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    downX = (int) event.getX();
+                    Log.i("event.getX()", " downX " + downX);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    upX = (int) event.getX();
+                    Log.i("event.getX()", " upX " + downX);
+                    if (upX - downX > 100) {
+                        //swipe right
+                        //check it's not 1st
+                        if (holeIdx != 0) {
+                            goToPrevHole();
+                        }
+                    } else if (downX - upX > -100 && downX - upX > 20) {
+                        // swipe left
+                        //check it's not 18th
+                        if (holeIdx != 17) {
+                            goToNextHole();
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private String calcDistance(Location location){
+        int distanceMeters = java.lang.Math.round(currentLocation.distanceTo(location));
+        return Integer.toString(distanceMeters);
 
     }
 
-    @Override
-    protected  void onStop(){
-        super.onStop();
-        //free up image resource space
-        Drawable drawable = holePic.getDrawable(); // declare this ImageView Globally
-        if (drawable instanceof BitmapDrawable) {
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            Bitmap bitmap = bitmapDrawable.getBitmap();
-            bitmap.recycle();
-            holePic.setImageBitmap(null);  // edited
+    private String calcDistance(Location location, boolean meters){
+        int distance = 0;
+        String ret = "";
+        if (!meters){
+            distance = (int) ((currentLocation.distanceTo(location) / 0.9144) + 0.5);
+            ret = Integer.toString(distance) + "y";
+
+        }else{
+            distance = java.lang.Math.round(currentLocation.distanceTo(location));
+            ret = Integer.toString(distance) + "m";
         }
-    }
+        return ret;
 
-    private TextView setupTextView(String s, int color, float textSize){
-        TextView text = new TextView(context);
-        text.setText(s);
-        text.setTextColor(color);
-        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
-        return text;
-    }
-
-    private Location setupLocation(Double lat, Double lng){
-        Location loc = new Location("");
-        loc.setLatitude(lat);
-        loc.setLongitude(lng);
-        return loc;
-    }
-
-    private void loadBitmap(ImageView imageView, Context context, int resId){
-        LoadHolePic loadPicTask = new LoadHolePic(imageView, context);
-        loadPicTask.execute(resId);
     }
 
 

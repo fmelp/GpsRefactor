@@ -18,66 +18,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HoleVizOne"
-            android:label="@string/title_activity_hole_viz_one"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizTwo"
-            android:label="@string/title_activity_hole_viz_two"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizThree"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizFour"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizFive"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizSix"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizSeven"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizEight"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizNine"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizTen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizEleven"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizTwelve"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizThirteen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizFourteen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizFifteen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizSixteen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HoleVizSeventeen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".HoleViz"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AllHoleViewer" />
         <activity android:name=".AAA" />
-        <activity android:name=".HoleVizEighteen">
-
-        </activity>
+        <activity android:name=".ShowEarth"></activity>
     </application>
 
 </manifest>
