@@ -6,6 +6,10 @@ import android.graphics.drawable.Drawable;
 import android.renderscript.ScriptGroup;
 import android.widget.ArrayAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,9 +30,11 @@ public class Model {
     public static boolean METERS;
     private static Context context;
     public static  ArrayList<String[]> HEADER_DETAILS;
+    public static ArrayList<Polygon> POLYGONS;
 
 
-    public Model(String fileNameLatLong, String fileNameHeaderDetails, Context contextIn) {
+    public Model(String fileNameLatLong, String fileNameHeaderDetails,
+                 String fileNamePolygons, Context contextIn) {
         //add second file name
         //fill in header details by reading from hole_details.txt
         METERS = true;
@@ -37,6 +43,7 @@ public class Model {
         AssetManager mgr = context.getResources().getAssets();
         LAT_LONGS = readAsset(mgr, fileNameLatLong);
         HEADER_DETAILS = makeHeaderDetails(mgr, fileNameHeaderDetails);
+        POLYGONS = readJSONFile(mgr, fileNamePolygons);
     }
 
 
@@ -152,6 +159,46 @@ public class Model {
 //            System.out.println(l.size());
 //        }
         return longLats;
+    }
+
+    private ArrayList<Polygon> readJSONFile(AssetManager mgr, String filename){
+        ArrayList<Polygon> polygons = new ArrayList<Polygon>();
+        try {
+            InputStream is = mgr.open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            JSONObject json = new JSONObject(new String(buffer, "UTF-8"));
+            JSONArray features = json.getJSONArray("features");
+//            System.out.println(features.toString());
+            //iterate through each feature (polygon line set)
+            //all the marked areas
+            for (int i = 0; i < features.length(); i++){
+                //find coordinates in json mess
+                JSONArray coordinates = features.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
+//                System.out.println(coordinates.toString());
+                //make polygon to add
+                Polygon.Builder polygonBuilder = Polygon.Builder();
+                //iterate through all lines for the one polygon
+                //make the polygon and add it to
+                for (int j = 0; j < coordinates.length(); j++){
+                    double x = coordinates.getJSONArray(j).getDouble(0);
+                    double y = coordinates.getJSONArray(j).getDouble(1);
+                    polygonBuilder.addVertex(new Point(x, y));
+                }
+                Polygon polygon = polygonBuilder.build();
+                polygons.add(polygon);
+//                Point p = new Point(17.397536, 40.879155);
+//                System.out.println(polygon.contains(p));
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return polygons;
     }
 
 

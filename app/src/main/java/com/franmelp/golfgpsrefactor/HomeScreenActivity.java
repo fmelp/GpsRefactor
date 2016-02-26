@@ -34,7 +34,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-         super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
         //size for text and green color for text
@@ -48,7 +48,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         //model that runs in background
         new SetVariables().execute();
 
-
+//        System.out.println(Model.POLYGONS.toString());
 
         //select meters or yards: text
         TextView selectText = (TextView) findViewById(R.id.selectText);
@@ -199,7 +199,10 @@ public class HomeScreenActivity extends AppCompatActivity {
     private class SetVariables extends AsyncTask<String, Void, String>{
         @Override
         protected String doInBackground(String... params){
-            Model model = new Model("long_lat_sdg.txt", "hole_details.txt", getApplicationContext());
+            Model model = new Model("long_lat_sdg.txt",
+                    "hole_details.txt",
+                    "polys.geojson",
+                    getApplicationContext());
             return "aa";
         }
     }
