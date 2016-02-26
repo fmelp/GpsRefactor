@@ -34,18 +34,20 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
         //size for text and green color for text
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, this.getApplicationContext().getResources().getDisplayMetrics());
+        myTextSize += 10.0;
         int color = Integer.parseInt("32cd32", 16)+0xFF000000;
 //        int color = Integer.parseInt("2E7D32", 16) + 0xFF000000;
 
+        //initiate all the variable
+        //model that runs in background
         new SetVariables().execute();
-        //set it to meter mode as default
-        metersBool = Model.METERS;
+
 
 
         //select meters or yards: text
@@ -53,6 +55,10 @@ public class HomeScreenActivity extends AppCompatActivity {
         selectText.setText("\nPlease select distance unit:");
         selectText.setTextSize(myTextSize);
         selectText.setTextColor(Color.BLUE);
+
+        //peg unit variable to model
+        //set to true in Model init
+        metersBool = Model.METERS;
 
         //meters radio button
         final RadioButton meters = (RadioButton) findViewById(R.id.radio0);
@@ -86,9 +92,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         check.setTextSize(myTextSize - 10);
         check.setTextColor(Color.BLUE);
         check.setGravity(Gravity.CENTER);
-        if (metersBool){
-            check.setText("---meters selected---");
-        }else{
+//        if (metersBool){
+//            check.setText("---meters selected---");
+//        }else{
+//            check.setText("---yards selected---");
+//        }
+//        check.setText("---meters selected---");
+        check.setText("---meters selected---");
+        if (!metersBool){
             check.setText("---yards selected---");
         }
 

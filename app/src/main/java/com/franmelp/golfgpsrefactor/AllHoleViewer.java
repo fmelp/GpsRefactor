@@ -36,6 +36,7 @@ public class AllHoleViewer extends AppCompatActivity {
         //text size and color
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, context.getResources().getDisplayMetrics());
+//        myTextSize += 10.0;
         int color = Integer.parseInt("32cd32", 16)+0xFF000000;
 
 //        for (int i = 0; i < buttonHolder.getChildCount(); i++){
@@ -100,7 +101,7 @@ public class AllHoleViewer extends AppCompatActivity {
             final int hole = i;
             String holeNumS = Integer.toString(i);
             holeButton.setText(holeNumS);
-            holeButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize + 64);
+            holeButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize + 54);
             holeButton.setTextColor(color);
             holeButton.setVisibility(Button.VISIBLE);
             if (i < 10){

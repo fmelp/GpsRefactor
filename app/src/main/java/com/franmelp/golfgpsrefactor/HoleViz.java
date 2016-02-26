@@ -220,6 +220,7 @@ public class HoleViz extends AppCompatActivity {
         //text size for tablet
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, this.getApplicationContext().getResources().getDisplayMetrics());
+        myTextSize += 10.0;
 
         //relative layout to hold everything together
         frame = new RelativeLayout(context);
@@ -227,8 +228,8 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT));
 //        int color = Integer.parseInt("32cd32", 16)+0xFF000000;
-//        int color = Integer.parseInt("1B5E20", 16) + 0xFF000000;
-        int color = Integer.parseInt("2E7D32", 16) + 0xFF000000;
+        int color = Integer.parseInt("4D4D4D", 16) + 0xFF000000;
+//        int color = Integer.parseInt("2E7D32", 16) + 0xFF000000;
         frame.setId(frame.generateViewId());
         frame.setBackgroundColor(color);
 
@@ -254,6 +255,7 @@ public class HoleViz extends AppCompatActivity {
         headerHolder.setId(headerHolder.generateViewId());
         headerHolder.setGravity(Gravity.CENTER);
         headerHolder.setOrientation(LinearLayout.VERTICAL);
+//        headerHolder.setBackgroundColor(Integer.parseInt("4D4D4D", 16) + 0xFF000000);
         headerHolder.setBackgroundColor(Color.GRAY);
         frame.addView(headerHolder);
 
@@ -321,19 +323,19 @@ public class HoleViz extends AppCompatActivity {
         headerHolder.addView(metersHolder);
 
         //m white
-        TextView whiteText = setupTextView(wt + "         ", Color.WHITE, myTextSize-10);
+        TextView whiteText = setupTextView(wt + "         ", Color.WHITE, myTextSize);
         metersHolder.addView(whiteText);
 
         //m white
-        TextView yelText = setupTextView(yt + "         ", Color.YELLOW, myTextSize-10);
+        TextView yelText = setupTextView(yt + "         ", Color.YELLOW, myTextSize);
         metersHolder.addView(yelText);
 
         //m white
-        TextView blackText = setupTextView(bt + "         ", Color.BLACK, myTextSize-10);
+        TextView blackText = setupTextView(bt + "         ", Color.BLACK, myTextSize);
         metersHolder.addView(blackText);
 
         //m white
-        TextView redText = setupTextView(rt, Color.RED, myTextSize-10);
+        TextView redText = setupTextView(rt, Color.RED, myTextSize);
         metersHolder.addView(redText);
 
 
@@ -498,6 +500,7 @@ public class HoleViz extends AppCompatActivity {
         //main menu button
         //to be above next and prev buttons
         Button mainMenuButton = new Button(context);
+        mainMenuButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
         mainMenuButton.setText("MAIN MENU");
         mainMenuButton.setTextSize(myTextSize + 10);
         RelativeLayout.LayoutParams mainMenuButtonParams = new RelativeLayout.LayoutParams(
@@ -535,7 +538,8 @@ public class HoleViz extends AppCompatActivity {
         //Prev button
         Button prevButton = new Button(context);
         prevButton.setText("PREV");
-        prevButton.setTextSize(myTextSize+20);
+        prevButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
+        prevButton.setTextSize(myTextSize+10);
         prevButton.setLayoutParams(buttonParams);
         buttonHolder.addView(prevButton);
         //check it's not the 1st
@@ -557,7 +561,8 @@ public class HoleViz extends AppCompatActivity {
         //next button
         Button nextButton = new Button(context);
         nextButton.setText("NEXT");
-        nextButton.setTextSize(myTextSize+20);
+        nextButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
+        nextButton.setTextSize(myTextSize+10);
         nextButton.setLayoutParams(buttonParams);
         buttonHolder.addView(nextButton);
         //check its not the 18th
