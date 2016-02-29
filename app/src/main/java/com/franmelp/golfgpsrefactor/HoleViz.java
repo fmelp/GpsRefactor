@@ -6,13 +6,15 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.IOError;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -59,6 +62,12 @@ public class HoleViz extends AppCompatActivity {
 
     boolean meters;
 
+    ArrayList<Polygon> polygons;
+
+//    AlarmController alarm;
+
+    Alarm alarm;
+
     private GestureDetector gestureDetector;
 
     private LocationManager locationManager;
@@ -73,6 +82,14 @@ public class HoleViz extends AppCompatActivity {
         //check if it's in meters or yards
         meters = Model.METERS;
 
+        //ref to polygons created in Model
+        //for geofencing of restricted areas
+        polygons = Model.POLYGONS;
+
+        //set up alarm
+//        alarm = new AlarmController(getApplicationContext());
+        alarm = new Alarm(getApplicationContext(), "android.resource://" + getPackageName() + "/" + "raw/siren");
+
         //figure out what hole it is
         Bundle b = getIntent().getExtras();
         if (b != null){
@@ -80,8 +97,10 @@ public class HoleViz extends AppCompatActivity {
             holeIdx = holeNum - 1;
         }
 
+
         //use this instead of setContentView
         //couldn't use xml bc of regeneration for every hole
+        //many instances variables set in here
         setupView();
 
         //set up swipe gestures
@@ -98,6 +117,12 @@ public class HoleViz extends AppCompatActivity {
 
             public void onLocationChanged(Location location) {
                 currentLocation = location;
+                //get doubles for comparing to polygons
+                Double y = currentLocation.getLatitude();
+                Double x = currentLocation.getLongitude();
+                //point to compare
+                Point point = new Point(x, y);
+
 //                //hazOne
 //                String distHazOne = "1. " + calcDistance(hazOneLoc);
 //                hazOneText.setText(distHazOne);
@@ -122,6 +147,31 @@ public class HoleViz extends AppCompatActivity {
                 String distYel = "yellow: " + calcDistance(fromYelLoc, meters);
                 fromYelText.setText(distYel);
 
+                //loop through polygons and check if point is in there
+                for (int i = 0; i < polygons.size(); i++){
+                    Polygon polygon = polygons.get(i);
+//                    if (polygon.contains(point)){
+////                        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+////                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 400);
+////                        Uri path = Uri.parse("android.resource://com.franmelp.golfgpsrefactor/raw/siren.mp3");
+//                        alarm.playSound("android.resource://" + getPackageName() + "/" + "raw/siren");
+//                        Toast.makeText(getApplicationContext(), "TORNA IN FAIRWAY STRONZO!",
+//                                Toast.LENGTH_SHORT).show();
+//                    }else{
+////                        alarm.playSound("android.resource://" + getPackageName() + "/" + "raw/empty");
+//                        alarm.mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, AudioManager.FLAG_PLAY_SOUND);
+//
+//
+//                    }
+                    if (polygon.contains(point)){
+                        alarm.play();
+                        Toast.makeText(getApplicationContext(), "TORNA IN FAIRWAY STRONZO!",
+                                Toast.LENGTH_SHORT).show();
+                    }else{
+                        alarm.pause();
+                    }
+
+                }
 
             }
             public void onStatusChanged(String provider, int status,
@@ -156,6 +206,9 @@ public class HoleViz extends AppCompatActivity {
 
         //reload image
         loadBitmap(holePic, context, Model.HOLE_IMAGE_REFS.get(holeIdx));
+
+        //reload alarm
+        alarm = new Alarm(getApplicationContext(), "android.resource://" + getPackageName() + "/" + "raw/siren");
     }
 
     @Override
@@ -193,6 +246,9 @@ public class HoleViz extends AppCompatActivity {
 //            next line makes app crash every time
             holePic.setImageBitmap(null);  // edited
         }
+
+        //release media player
+        alarm.releasePlayer();
     }
 
     private TextView setupTextView(String s, int color, float textSize){
@@ -362,10 +418,6 @@ public class HoleViz extends AppCompatActivity {
 //        holePic.setScaleType(ImageView.ScaleType.FIT_XY);
         frame.addView(holePic);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point sze = new Point();
-        display.getSize(sze);
-        int height = sze.y;
 
         //Relative Layout for right side of screen
         RelativeLayout rightFrame = new RelativeLayout(context);
@@ -427,7 +479,7 @@ public class HoleViz extends AppCompatActivity {
                         latLongsHole.get(i + 1));
                 //set up hazard header
                 textParent.addView(setupTextView("", Color.BLACK, myTextSize));
-                TextView hazHeader = setupTextView("HAZARDS: ", Color.RED, myTextSize);
+                TextView hazHeader = setupTextView("HAZARDS: ", Color.CYAN, myTextSize);
                 hazHeader.setGravity(Gravity.RIGHT);
                 hazHeader.setTypeface(null, Typeface.BOLD);
                 textParent.addView(hazHeader);
@@ -435,12 +487,12 @@ public class HoleViz extends AppCompatActivity {
             }else if (i == size - 4){
                 //set up to-green header
                 textParent.addView(setupTextView("", Color.BLACK, myTextSize));
-                TextView greenHeader = setupTextView("TO GREEN: ", Color.BLACK, myTextSize + 10);
+                TextView greenHeader = setupTextView("TO GREEN: ", Color.WHITE, myTextSize + 10);
                 greenHeader.setGravity(Gravity.RIGHT);
                 greenHeader.setTypeface(null, Typeface.BOLD);
                 textParent.addView(greenHeader);
                 //set front text box
-                toFrontText = setupTextView("front: ", Color.BLACK, myTextSize+10);
+                toFrontText = setupTextView("front: ", Color.WHITE, myTextSize+10);
                 toFrontText.setGravity(Gravity.RIGHT);
                 textParent.addView(toFrontText);
                 //set location
@@ -448,7 +500,7 @@ public class HoleViz extends AppCompatActivity {
                         latLongsHole.get(i + 1));
             }else if (i == size - 2){
                 //set back text box
-                toBackText = setupTextView("back: ", Color.BLACK, myTextSize+10);
+                toBackText = setupTextView("back: ", Color.WHITE, myTextSize+10);
                 toBackText.setGravity(Gravity.RIGHT);
                 textParent.addView(toBackText);
                 textParent.addView(setupTextView("", Color.BLACK, myTextSize));
@@ -461,7 +513,7 @@ public class HoleViz extends AppCompatActivity {
                 //and add it to list for processing in location listener
                 int hazNum = (i / 2) - 1;
                 String hazNumString = Integer.toString(hazNum) + ". ";
-                TextView hazardText = setupTextView(hazNumString, Color.RED, myTextSize);
+                TextView hazardText = setupTextView(hazNumString, Color.CYAN, myTextSize);
                 hazardText.setGravity(Gravity.RIGHT);
                 textParent.addView(hazardText);
                 hazTexts.add(hazardText);
@@ -502,6 +554,7 @@ public class HoleViz extends AppCompatActivity {
         Button mainMenuButton = new Button(context);
         mainMenuButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
         mainMenuButton.setText("MAIN MENU");
+        mainMenuButton.setSoundEffectsEnabled(false);
         mainMenuButton.setTextSize(myTextSize + 10);
         RelativeLayout.LayoutParams mainMenuButtonParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -538,6 +591,7 @@ public class HoleViz extends AppCompatActivity {
         //Prev button
         Button prevButton = new Button(context);
         prevButton.setText("PREV");
+        prevButton.setSoundEffectsEnabled(false);
         prevButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
         prevButton.setTextSize(myTextSize+10);
         prevButton.setLayoutParams(buttonParams);
@@ -561,6 +615,7 @@ public class HoleViz extends AppCompatActivity {
         //next button
         Button nextButton = new Button(context);
         nextButton.setText("NEXT");
+        nextButton.setSoundEffectsEnabled(false);
         nextButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
         nextButton.setTextSize(myTextSize+10);
         nextButton.setLayoutParams(buttonParams);

@@ -34,6 +34,8 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
@@ -145,16 +147,19 @@ public class HomeScreenActivity extends AppCompatActivity {
         startOneButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize + 10);
         startOneButton.setTextColor(color);
         startOneButton.setTypeface(null, Typeface.BOLD);
+        startOneButton.setSoundEffectsEnabled(false);
         //start from 10th
         startTenButton = (Button) findViewById(R.id.startTenButton);
         startTenButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize + 10);
         startTenButton.setTextColor(color);
         startTenButton.setTypeface(null, Typeface.BOLD);
+        startTenButton.setSoundEffectsEnabled(false);
         //select which hole
         selectHoleButton = (Button) findViewById(R.id.allHoleViewerButton);
         selectHoleButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize + 10);
         selectHoleButton.setTextColor(color);
         selectHoleButton.setTypeface(null, Typeface.BOLD);
+        selectHoleButton.setSoundEffectsEnabled(false);
 
         selectHoleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,4 +211,6 @@ public class HomeScreenActivity extends AppCompatActivity {
             return "aa";
         }
     }
+
+
 }
