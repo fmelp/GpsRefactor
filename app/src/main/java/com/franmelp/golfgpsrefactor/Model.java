@@ -31,21 +31,39 @@ public class Model {
     private static Context context;
     public static  ArrayList<String[]> HEADER_DETAILS;
     public static ArrayList<Polygon> POLYGONS;
+    public static String CART_NUMBER;
+    public static String CURRENT_LOC;
+    public static boolean SIREN_BOOL;
 
 
     public Model(String fileNameLatLong, String fileNameHeaderDetails,
                  String fileNamePolygons, Context contextIn) {
         //add second file name
         //fill in header details by reading from hole_details.txt
-        METERS = true;
+        METERS = false;
         context = contextIn;
         HOLE_IMAGE_REFS = makeImageRefs();
         AssetManager mgr = context.getResources().getAssets();
         LAT_LONGS = readAsset(mgr, fileNameLatLong);
         HEADER_DETAILS = makeHeaderDetails(mgr, fileNameHeaderDetails);
         POLYGONS = readJSONFile(mgr, fileNamePolygons);
+        //to be hardcoded for each cart
+        CART_NUMBER = "1";
+        //updated in HoleVIz every time location is changed
+        CURRENT_LOC = "";
+        //have a way to turn siren on and off
+        SIREN_BOOL = true;
     }
 
+
+    public static void changeSirenStatus(){
+        if (SIREN_BOOL == false){
+            SIREN_BOOL = true;
+        }
+        else if (SIREN_BOOL == true){
+            SIREN_BOOL = false;
+        }
+    }
 
 
     private static ArrayList<Integer> makeImageRefs(){

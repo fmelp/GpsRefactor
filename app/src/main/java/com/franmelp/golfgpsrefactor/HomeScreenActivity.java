@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -17,11 +19,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.util.List;
 
+
+///FOR next devices remember to turn off auto-update in google play store
+//autoupdate in settings about
+//in apps go to google play services and turn off notifications
 
 public class HomeScreenActivity extends AppCompatActivity {
 
@@ -29,7 +36,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     private static Button startOneButton;
     private static Button startTenButton;
 
-    private boolean metersBool;
+
+    private LinearLayout frame;
 
 
     @Override
@@ -39,7 +47,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        //size for text and green color for text
+        //get reference to holding frame for touch events
+        frame = (LinearLayout) findViewById(R.id.mainLinLayoutHome);
+
+
+
+
+
+    //size for text and green color for text
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, this.getApplicationContext().getResources().getDisplayMetrics());
         myTextSize += 10.0;
@@ -60,13 +75,13 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         //peg unit variable to model
         //set to true in Model init
-        metersBool = Model.METERS;
+        Model.METERS = Model.METERS;
 
         //meters radio button
         final RadioButton meters = (RadioButton) findViewById(R.id.radio0);
         meters.setText("METERS");
         meters.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize);
-        if (metersBool){
+        if (Model.METERS){
             meters.setTextColor(Color.BLUE);
             meters.setTypeface(null, Typeface.BOLD);
             meters.setChecked(true);
@@ -80,7 +95,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         final RadioButton yards = (RadioButton) findViewById(R.id.radio1);
         yards.setText("YARDS");
         yards.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize);
-        if (metersBool){
+        if (Model.METERS){
             yards.setTextColor(Color.GRAY);
         }else{
             yards.setTextColor(Color.BLUE);
@@ -94,14 +109,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         check.setTextSize(myTextSize - 10);
         check.setTextColor(Color.BLUE);
         check.setGravity(Gravity.CENTER);
-//        if (metersBool){
+//        if (Model.METERS){
 //            check.setText("---meters selected---");
 //        }else{
 //            check.setText("---yards selected---");
 //        }
 //        check.setText("---meters selected---");
         check.setText("---meters selected---");
-        if (!metersBool){
+        if (!Model.METERS){
             check.setText("---yards selected---");
         }
 
@@ -190,15 +205,9 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
         });
 
-//        //try and have a back button
-//        ActivityManager mngr = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
-//
-//        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
-//
-//        if(taskList.get(0).numActivities == 1 &&
-//                taskList.get(0).topActivity.getClassName().equals(HoleViz.class.getName())) {
-//            System.out.println("here mate");
-//        }
+
+        setupAdminSwipe();
+
     }
 
     private class SetVariables extends AsyncTask<String, Void, String>{
@@ -209,6 +218,72 @@ public class HomeScreenActivity extends AppCompatActivity {
                     "polys.geojson",
                     getApplicationContext());
             return "aa";
+        }
+    }
+
+    //to access admin settings
+    //swipe left 7 times to get to admin settings
+    private void setupAdminSwipe(){
+        frame.setOnTouchListener(new View.OnTouchListener() {
+
+            int downX, upX;
+            int pointCount = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                pointCount = pointCount + event.getPointerCount();
+                if (pointCount >= 7) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        downX = (int) event.getX();
+                        Log.i("event.getX()", " downX " + downX);
+                        return true;
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        upX = (int) event.getX();
+                        Log.i("event.getX()", " upX " + downX);
+                        if (downX - upX > -100 && downX - upX > 20) {
+                            // swipe left
+                            //check it's not 18th
+                            Intent startAdminMenu = new Intent(HomeScreenActivity.this, AdminMenu.class);
+                            startActivity(startAdminMenu);
+                            finish();
+                        }
+
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+        });
+    }
+
+    private void sendEmail(){
+        //SENDING EMAILS
+        //first part is hack to avoid doing it in async task
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        //actual mail sending code
+        Mail m = new Mail("golfsandomenico@gmail.com", "chemaestro");
+        String[] toAttr = {"info@sandomenicogolf.com"};
+        m.setTo(toAttr);
+        m.setFrom("golfsandomenico@gmail.com");
+        m.setSubject("buoooongioooorno");
+        m.setBody("CHE MAESTRO!");
+        try {
+            if(m.send()) {
+                Toast.makeText(HomeScreenActivity.this, "Email was sent succesfully.", Toast.LENGTH_LONG).show();
+//                    here redirect the user back to the screen they were at. indicating success
+            } else {
+                Toast.makeText(HomeScreenActivity.this, "Email was not sent.", Toast.LENGTH_LONG).show();
+            }
+        } catch(Exception e) {
+            //in here i need to handle if the email was not sent
+            //need to warn user and tell him to send form again
+            //or not clear form until this exception doesnt run
+            Log.e("MailApp", "Could not send email", e);
+            Toast.makeText(HomeScreenActivity.this, "Email was not sent exception", Toast.LENGTH_LONG).show();
         }
     }
 

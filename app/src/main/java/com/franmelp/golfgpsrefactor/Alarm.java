@@ -30,7 +30,19 @@ public class Alarm {
     }
 
     public void play(){
-        if (!mp.isPlaying()){
+//        if (!mp.isPlaying()){
+//            mp.setLooping(true);
+//            mp.start();
+//            mp.setOnErrorListener(new android.media.MediaPlayer.OnErrorListener() {
+//
+//                public boolean onError(MediaPlayer mediaplayer, int i, int j) {
+//                    return false;
+//                }
+//            });
+//        }
+        mp.setLooping(true);
+        mp.start();
+        if (!mp.isLooping()){
             mp.setLooping(true);
             mp.start();
         }
@@ -57,6 +69,7 @@ public class Alarm {
             mp.setDataSource(context, alarmSound);
             mp.setAudioStreamType(AudioManager.STREAM_ALARM);
             mp.prepare();
+            mp.setLooping(true);
         }catch (IOException e){
 
         }

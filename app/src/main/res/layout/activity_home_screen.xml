@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/mainLinLayout"
+        android:id="@+id/mainLinLayoutHome"
         tools:context="com.franmelp.golfgpsrefactor.HomeScreenActivity">
         <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
         <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
@@ -76,6 +76,8 @@
             android:text="Select Hole"
             android:id="@+id/allHoleViewerButton"
             />
+
+
 
 
 

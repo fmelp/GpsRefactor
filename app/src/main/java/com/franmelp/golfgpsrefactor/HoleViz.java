@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.media.ToneGenerator;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -64,7 +65,7 @@ public class HoleViz extends AppCompatActivity {
 
     ArrayList<Polygon> polygons;
 
-//    AlarmController alarm;
+    Toast toast;
 
     Alarm alarm;
 
@@ -89,6 +90,14 @@ public class HoleViz extends AppCompatActivity {
         //set up alarm
 //        alarm = new AlarmController(getApplicationContext());
         alarm = new Alarm(getApplicationContext(), "android.resource://" + getPackageName() + "/" + "raw/siren");
+
+        //set up toast
+        //to show when in restricted areas
+        toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast, null));
+        //toast.show() in locationListener
 
         //figure out what hole it is
         Bundle b = getIntent().getExtras();
@@ -120,6 +129,8 @@ public class HoleViz extends AppCompatActivity {
                 //get doubles for comparing to polygons
                 Double y = currentLocation.getLatitude();
                 Double x = currentLocation.getLongitude();
+                //UPDATE LOCATION IN MODEL FOR SERVER
+                Model.CURRENT_LOC = x.toString() + ", " + y.toString();
                 //point to compare
                 Point point = new Point(x, y);
 
@@ -147,31 +158,38 @@ public class HoleViz extends AppCompatActivity {
                 String distYel = "yellow: " + calcDistance(fromYelLoc, meters);
                 fromYelText.setText(distYel);
 
+                //check if siren fuction is turned on
+                //calls function that does the point in polygon algo
+                if (Model.SIREN_BOOL){
+                    inRestrictedArea();
+                }
+
+
                 //loop through polygons and check if point is in there
-                for (int i = 0; i < polygons.size(); i++){
-                    Polygon polygon = polygons.get(i);
+//                for (int i = 0; i < polygons.size(); i++){
+//                    Polygon polygon = polygons.get(i);
+////                    if (polygon.contains(point)){
+//////                        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+//////                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 400);
+//////                        Uri path = Uri.parse("android.resource://com.franmelp.golfgpsrefactor/raw/siren.mp3");
+////                        alarm.playSound("android.resource://" + getPackageName() + "/" + "raw/siren");
+////                        Toast.makeText(getApplicationContext(), "TORNA IN FAIRWAY STRONZO!",
+////                                Toast.LENGTH_SHORT).show();
+////                    }else{
+//////                        alarm.playSound("android.resource://" + getPackageName() + "/" + "raw/empty");
+////                        alarm.mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, AudioManager.FLAG_PLAY_SOUND);
+////
+////
+////                    }
 //                    if (polygon.contains(point)){
-////                        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-////                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 400);
-////                        Uri path = Uri.parse("android.resource://com.franmelp.golfgpsrefactor/raw/siren.mp3");
-//                        alarm.playSound("android.resource://" + getPackageName() + "/" + "raw/siren");
+//                        playSound();
 //                        Toast.makeText(getApplicationContext(), "TORNA IN FAIRWAY STRONZO!",
 //                                Toast.LENGTH_SHORT).show();
 //                    }else{
-////                        alarm.playSound("android.resource://" + getPackageName() + "/" + "raw/empty");
-//                        alarm.mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, AudioManager.FLAG_PLAY_SOUND);
-//
-//
+//                        stopSound();
 //                    }
-                    if (polygon.contains(point)){
-                        alarm.play();
-                        Toast.makeText(getApplicationContext(), "TORNA IN FAIRWAY STRONZO!",
-                                Toast.LENGTH_SHORT).show();
-                    }else{
-                        alarm.pause();
-                    }
-
-                }
+//
+//                }
 
             }
             public void onStatusChanged(String provider, int status,
@@ -186,6 +204,41 @@ public class HoleViz extends AppCompatActivity {
             }
         };
 
+
+    }
+
+    private void playSound(){
+        alarm.play();
+    }
+
+    private void stopSound(){
+        alarm.pause();
+    }
+
+    public void inRestrictedArea(){
+        boolean callAgain = false;
+        Double y = currentLocation.getLatitude();
+        Double x = currentLocation.getLongitude();
+        //point to compare
+        Point point = new Point(x, y);
+
+        for (int i = 0; i < polygons.size(); i++){
+            Polygon polygon = polygons.get(i);
+            if (polygon.contains(point)){
+                callAgain = true;
+                playSound();
+                toast.show();
+                //make message show up for longer
+                toast.show();
+//                Toast.makeText(getApplicationContext(), "TORNA IN FAIRWAY STRONZO!",
+//                        Toast.LENGTH_SHORT).show();
+            }else{
+                stopSound();
+            }
+        }
+        if (callAgain){
+            playSound();
+        }
 
     }
 
@@ -690,11 +743,6 @@ public class HoleViz extends AppCompatActivity {
         });
     }
 
-    private String calcDistance(Location location){
-        int distanceMeters = java.lang.Math.round(currentLocation.distanceTo(location));
-        return Integer.toString(distanceMeters);
-
-    }
 
     private String calcDistance(Location location, boolean meters){
         int distance = 0;

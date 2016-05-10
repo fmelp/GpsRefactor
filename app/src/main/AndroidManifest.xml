@@ -3,6 +3,8 @@
     package="com.franmelp.golfgpsrefactor">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -22,7 +24,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AllHoleViewer" />
         <activity android:name=".AAA" />
-        <activity android:name=".ShowEarth"></activity>
+        <activity android:name=".ShowEarth" />
+        <activity android:name=".AdminMenu" />
+        <activity android:name=".MenuOrder"></activity>
     </application>
 
 </manifest>
