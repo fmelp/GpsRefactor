@@ -53,7 +53,6 @@ public class HomeScreenActivity extends AppCompatActivity {
 
 
 
-
     //size for text and green color for text
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, this.getApplicationContext().getResources().getDisplayMetrics());
@@ -201,6 +200,20 @@ public class HomeScreenActivity extends AppCompatActivity {
                 Intent startTen = new Intent(HomeScreenActivity.this, HoleViz.class);
                 startTen.putExtra("hole_num", 10);
                 startActivity(startTen);
+                finish();
+            }
+        });
+
+        //go order food
+        Button adminMenuButton = (Button) findViewById(R.id.foodPage);
+        adminMenuButton.setTextSize(myTextSize);
+        adminMenuButton.setTextColor(color);
+        adminMenuButton.setText("FOOD");
+        adminMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startAdminMenu = new Intent(HomeScreenActivity.this, MenuOrder.class);
+                startActivity(startAdminMenu);
                 finish();
             }
         });

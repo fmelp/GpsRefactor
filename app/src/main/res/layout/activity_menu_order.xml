@@ -17,17 +17,19 @@
         tools:context="com.franmelp.golfgpsrefactor.MenuOrder">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:id="@+id/scrollerHolder">
+            android:id="@+id/scrollerHolder"
+            android:weightSum="2">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/drinkScrollerHolder"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="1">
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/drinkText">
                 </TextView>
                 <Spinner
@@ -39,12 +41,13 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/foodScrollerHolder"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="1">
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/foodText">
                 </TextView>
                 <Spinner
@@ -57,22 +60,23 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:id="@+id/itemHolder">
+            android:id="@+id/itemHolder"
+            android:weightSum="8">
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/deliveryFeeText"/>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/totalText"/>
         <Button
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/orderButton"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/orderButton" />
 
     </LinearLayout>
 </ScrollView>

@@ -77,6 +77,13 @@
             android:id="@+id/allHoleViewerButton"
             />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Hole"
+            android:id="@+id/foodPage"
+            />
+
 
 
 
