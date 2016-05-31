@@ -34,6 +34,7 @@ public class Model {
     public static String CART_NUMBER;
     public static String CURRENT_LOC;
     public static boolean SIREN_BOOL;
+    public static int HOLE_NUMBER;
 
 
     public Model(String fileNameLatLong, String fileNameHeaderDetails,
@@ -53,6 +54,8 @@ public class Model {
         CURRENT_LOC = "";
         //have a way to turn siren on and off
         SIREN_BOOL = true;
+        //make it 0 to start with
+        HOLE_NUMBER = 1;
     }
 
 
@@ -63,6 +66,10 @@ public class Model {
         else if (SIREN_BOOL == true){
             SIREN_BOOL = false;
         }
+    }
+
+    public static void changeHoleNumber(int hole){
+        HOLE_NUMBER = hole;
     }
 
 

@@ -103,6 +103,8 @@ public class HoleViz extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         if (b != null){
             int holeNum = b.getInt("hole_num");
+            Model.changeHoleNumber(holeNum);
+            Model.HOLE_NUMBER = holeNum;
             holeIdx = holeNum - 1;
         }
 
@@ -618,6 +620,7 @@ public class HoleViz extends AppCompatActivity {
             public void onClick(View v) {
                 Intent goToMainMenu = new Intent(HoleViz.this, HomeScreenActivity.class);
                 startActivity(goToMainMenu);
+                finish();
             }
         });
 

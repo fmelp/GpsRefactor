@@ -35,6 +35,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private static Button selectHoleButton;
     private static Button startOneButton;
     private static Button startTenButton;
+    public Model model;
 
 
     private LinearLayout frame;
@@ -53,6 +54,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 
 
 
+
     //size for text and green color for text
         float myTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 18F, this.getApplicationContext().getResources().getDisplayMetrics());
@@ -60,9 +62,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         int color = Integer.parseInt("32cd32", 16)+0xFF000000;
 //        int color = Integer.parseInt("2E7D32", 16) + 0xFF000000;
 
-        //initiate all the variable
-        //model that runs in background
-        new SetVariables().execute();
+//        //initiate all the variable
+//        //model that runs in background
+//        new SetVariables().execute();
+        //set up model
+        model = new Model("long_lat_sdg.txt",
+                    "hole_details.txt",
+                    "polys.geojson",
+                    getApplicationContext());
 
 //        System.out.println(Model.POLYGONS.toString());
 
@@ -223,16 +230,20 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     }
 
-    private class SetVariables extends AsyncTask<String, Void, String>{
-        @Override
-        protected String doInBackground(String... params){
-            Model model = new Model("long_lat_sdg.txt",
-                    "hole_details.txt",
-                    "polys.geojson",
-                    getApplicationContext());
-            return "aa";
-        }
-    }
+//    private class SetVariables extends AsyncTask<String, Void, String>{
+//        @Override
+//        protected String doInBackground(String... params){
+//            Model model = new Model("long_lat_sdg.txt",
+//                    "hole_details.txt",
+//                    "polys.geojson",
+//                    getApplicationContext());
+//            return "aa";
+//        }
+//        @Override
+//        public void onPostExecute(String a) {
+//
+//        }
+//    }
 
     //to access admin settings
     //swipe left 7 times to get to admin settings
@@ -270,35 +281,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         });
     }
 
-    private void sendEmail(){
-        //SENDING EMAILS
-        //first part is hack to avoid doing it in async task
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-        //actual mail sending code
-        Mail m = new Mail("golfsandomenico@gmail.com", "chemaestro");
-        String[] toAttr = {"info@sandomenicogolf.com"};
-        m.setTo(toAttr);
-        m.setFrom("golfsandomenico@gmail.com");
-        m.setSubject("buoooongioooorno");
-        m.setBody("CHE MAESTRO!");
-        try {
-            if(m.send()) {
-                Toast.makeText(HomeScreenActivity.this, "Email was sent succesfully.", Toast.LENGTH_LONG).show();
-//                    here redirect the user back to the screen they were at. indicating success
-            } else {
-                Toast.makeText(HomeScreenActivity.this, "Email was not sent.", Toast.LENGTH_LONG).show();
-            }
-        } catch(Exception e) {
-            //in here i need to handle if the email was not sent
-            //need to warn user and tell him to send form again
-            //or not clear form until this exception doesnt run
-            Log.e("MailApp", "Could not send email", e);
-            Toast.makeText(HomeScreenActivity.this, "Email was not sent exception", Toast.LENGTH_LONG).show();
-        }
-    }
 
 
 }
