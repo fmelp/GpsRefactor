@@ -77,10 +77,16 @@
             android:id="@+id/allHoleViewerButton"
             />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="70dp"
+            android:text=""/>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Hole"
+            android:text="ORDER FandB"
             android:id="@+id/foodPage"
             />
 

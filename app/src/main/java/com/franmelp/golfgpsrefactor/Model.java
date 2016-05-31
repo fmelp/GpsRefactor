@@ -37,12 +37,18 @@ public class Model {
     public static int HOLE_NUMBER;
 
 
-    public Model(String fileNameLatLong, String fileNameHeaderDetails,
-                 String fileNamePolygons, Context contextIn) {
+    private static Model instance = null;
+//    private Model("long_lat_sdg.txt", "hole_details.txt", "polys.geojson", HomeScreenActivity().getContext());
+
+
+
+
+    private Model(String fileNameLatLong, String fileNameHeaderDetails,
+                 String fileNamePolygons) {
         //add second file name
         //fill in header details by reading from hole_details.txt
         METERS = false;
-        context = contextIn;
+        context = ContextInfo.context;
         HOLE_IMAGE_REFS = makeImageRefs();
         AssetManager mgr = context.getResources().getAssets();
         LAT_LONGS = readAsset(mgr, fileNameLatLong);
@@ -56,6 +62,13 @@ public class Model {
         SIREN_BOOL = true;
         //make it 0 to start with
         HOLE_NUMBER = 1;
+    }
+
+    public static Model getInstance() {
+        if (instance == null){
+            instance = new Model("long_lat_sdg.txt", "hole_details.txt", "polys.geojson");
+        }
+        return instance;
     }
 
 

@@ -38,14 +38,18 @@ public class MenuOrder extends AppCompatActivity {
     TextView total;
     int hole_num;
 
+    private final Model model = Model.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_order);
 
+//        model = Model.getInstance();
+
         //get hole you were on
-        hole_num = Model.HOLE_NUMBER;
+        hole_num = model.HOLE_NUMBER;
 
         //get context
         context = getApplicationContext();
@@ -312,9 +316,9 @@ public class MenuOrder extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent startOne = new Intent(MenuOrder.this, HoleViz.class);
-                startOne.putExtra("hole_num", hole_num);
-                startActivity(startOne);
+                Intent backToHole = new Intent(MenuOrder.this, HoleViz.class);
+                backToHole.putExtra("hole_num", hole_num);
+                startActivity(backToHole);
                 finish();
 
             }
@@ -337,7 +341,7 @@ public class MenuOrder extends AppCompatActivity {
             String[] toAttr = {"f@sandomenicogolf.com"};
             m.setTo(toAttr);
             m.setFrom("golfsandomenico@gmail.com");
-            m.setSubject("Ordine per cart #" + Model.CART_NUMBER);
+            m.setSubject("Ordine per cart #" + model.CART_NUMBER);
             m.setBody(createMessage());
             try {
                 if(m.send()) {
@@ -361,7 +365,10 @@ public class MenuOrder extends AppCompatActivity {
             if (e==null) {
                 Toast.makeText(MenuOrder.this, "ORDER SENT", Toast.LENGTH_LONG).show();
                 //here return to the previous page
-
+                Intent backToHole = new Intent(MenuOrder.this, HoleViz.class);
+                backToHole.putExtra("hole_num", hole_num);
+                startActivity(backToHole);
+                finish();
 
             }
             else {
@@ -423,7 +430,7 @@ public class MenuOrder extends AppCompatActivity {
         String[] toAttr = {recepient};
         m.setTo(toAttr);
         m.setFrom("golfsandomenico@gmail.com");
-        m.setSubject("Ordine per cart #" + Model.CART_NUMBER);
+        m.setSubject("Ordine per cart #" + model.CART_NUMBER);
         m.setBody(message);
         try {
             if(m.send()) {

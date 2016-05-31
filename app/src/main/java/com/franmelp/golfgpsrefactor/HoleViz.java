@@ -75,17 +75,19 @@ public class HoleViz extends AppCompatActivity {
     private Location currentLocation;
     private LocationListener locationListener;
 
+    private final Model model = Model.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
 
         //check if it's in meters or yards
-        meters = Model.METERS;
+        meters = model.METERS;
 
         //ref to polygons created in Model
         //for geofencing of restricted areas
-        polygons = Model.POLYGONS;
+        polygons = model.POLYGONS;
 
         //set up alarm
 //        alarm = new AlarmController(getApplicationContext());
@@ -103,8 +105,7 @@ public class HoleViz extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         if (b != null){
             int holeNum = b.getInt("hole_num");
-            Model.changeHoleNumber(holeNum);
-            Model.HOLE_NUMBER = holeNum;
+            model.changeHoleNumber(holeNum);
             holeIdx = holeNum - 1;
         }
 
@@ -132,7 +133,7 @@ public class HoleViz extends AppCompatActivity {
                 Double y = currentLocation.getLatitude();
                 Double x = currentLocation.getLongitude();
                 //UPDATE LOCATION IN MODEL FOR SERVER
-                Model.CURRENT_LOC = x.toString() + ", " + y.toString();
+                model.CURRENT_LOC = x.toString() + ", " + y.toString();
                 //point to compare
                 Point point = new Point(x, y);
 
@@ -162,7 +163,7 @@ public class HoleViz extends AppCompatActivity {
 
                 //check if siren fuction is turned on
                 //calls function that does the point in polygon algo
-                if (Model.SIREN_BOOL){
+                if (model.SIREN_BOOL){
                     inRestrictedArea();
                 }
 
@@ -257,10 +258,10 @@ public class HoleViz extends AppCompatActivity {
 
         }
         //see if meters was updated
-        meters = Model.METERS;
+        meters = model.METERS;
 
         //reload image
-        loadBitmap(holePic, context, Model.HOLE_IMAGE_REFS.get(holeIdx));
+        loadBitmap(holePic, context, model.HOLE_IMAGE_REFS.get(holeIdx));
 
         //reload alarm
         alarm = new Alarm(getApplicationContext(), "android.resource://" + getPackageName() + "/" + "raw/siren");
@@ -381,7 +382,7 @@ public class HoleViz extends AppCompatActivity {
         headerHolder.addView(detailHolder);
 
         //hole details String[] : hole_num, par, handicap, w, y, b, r
-        String[] holeDetails = Model.HEADER_DETAILS.get(holeIdx);
+        String[] holeDetails = model.HEADER_DETAILS.get(holeIdx);
         String holeNum = holeDetails[0];
         String par = holeDetails[1];
         String hcp = holeDetails[2];
@@ -456,7 +457,7 @@ public class HoleViz extends AppCompatActivity {
         //load hole pic
         holePic = new ImageView(context);
 //        holePic.setImageResource(Model.HOLE_IMAGE_REFS.get(holeIdx));
-        loadBitmap(holePic, context, Model.HOLE_IMAGE_REFS.get(holeIdx));
+        loadBitmap(holePic, context, model.HOLE_IMAGE_REFS.get(holeIdx));
 //        holePic.setImageBitmap(
 //                decodeSampledBitmapFromResource(
 //                        getResources(),
@@ -505,7 +506,7 @@ public class HoleViz extends AppCompatActivity {
 
         //set distance TextViews
         //and also locations in same loop
-        latLongsHole = Model.LAT_LONGS.get(holeIdx);
+        latLongsHole = model.LAT_LONGS.get(holeIdx);
         int size = latLongsHole.size();
         int numHazards = (size - 8) / 2;
         hazTexts = new ArrayList<>(numHazards);
@@ -601,6 +602,31 @@ public class HoleViz extends AppCompatActivity {
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
         allButtonsLinear.setOrientation(LinearLayout.VERTICAL);
         allButtonsBottomHolder.addView(allButtonsLinear);
+
+
+        //order food button
+        //to be above main menu button
+        Button orderButton = new Button(context);
+        orderButton.setBackgroundColor(Integer.parseInt("2E7D32", 16) + 0xFF000000);
+        orderButton.setText("ORDER F&B");
+        orderButton.setSoundEffectsEnabled(false);
+        orderButton.setTextSize(myTextSize + 10);
+//        RelativeLayout.LayoutParams mainMenuButtonParams = new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.MATCH_PARENT,
+//                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        allButtonsLinear.addView(orderButton);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToMainMenu = new Intent(HoleViz.this, MenuOrder.class);
+                startActivity(goToMainMenu);
+                finish();
+            }
+        });
+
+        //empty text view to make space inbetween main and prev/next buttons
+        TextView spaceZero = setupTextView("", Color.BLACK, 15);
+        allButtonsLinear.addView(spaceZero);
 
 
 

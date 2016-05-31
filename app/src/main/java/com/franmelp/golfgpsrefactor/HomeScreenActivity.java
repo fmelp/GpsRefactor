@@ -1,6 +1,7 @@
 package com.franmelp.golfgpsrefactor;
 
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -35,10 +36,15 @@ public class HomeScreenActivity extends AppCompatActivity {
     private static Button selectHoleButton;
     private static Button startOneButton;
     private static Button startTenButton;
-    public Model model;
+
 
 
     private LinearLayout frame;
+
+    public static Context context;
+    private final ContextInfo c = new ContextInfo(context);
+
+    private Model model;
 
 
     @Override
@@ -52,6 +58,18 @@ public class HomeScreenActivity extends AppCompatActivity {
         frame = (LinearLayout) findViewById(R.id.mainLinLayoutHome);
 
 
+        //helper to give model a context to work with
+        context = getApplicationContext();
+        new ContextInfo(context);
+
+        model = Model.getInstance();
+
+
+
+        setupAdminSwipe();
+
+
+
 
 
 
@@ -62,14 +80,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         int color = Integer.parseInt("32cd32", 16)+0xFF000000;
 //        int color = Integer.parseInt("2E7D32", 16) + 0xFF000000;
 
-//        //initiate all the variable
-//        //model that runs in background
+        //initiate all the variable
+        //model that runs in background
 //        new SetVariables().execute();
         //set up model
-        model = new Model("long_lat_sdg.txt",
-                    "hole_details.txt",
-                    "polys.geojson",
-                    getApplicationContext());
+//        model = new Model("long_lat_sdg.txt",
+//                    "hole_details.txt",
+//                    "polys.geojson",
+//                    getApplicationContext());
 
 //        System.out.println(Model.POLYGONS.toString());
 
@@ -87,7 +105,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         final RadioButton meters = (RadioButton) findViewById(R.id.radio0);
         meters.setText("METERS");
         meters.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize);
-        if (Model.METERS){
+        if (model.METERS){
             meters.setTextColor(Color.BLUE);
             meters.setTypeface(null, Typeface.BOLD);
             meters.setChecked(true);
@@ -101,7 +119,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         final RadioButton yards = (RadioButton) findViewById(R.id.radio1);
         yards.setText("YARDS");
         yards.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize);
-        if (Model.METERS){
+        if (model.METERS){
             yards.setTextColor(Color.GRAY);
         }else{
             yards.setTextColor(Color.BLUE);
@@ -122,7 +140,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 //        }
 //        check.setText("---meters selected---");
         check.setText("---meters selected---");
-        if (!Model.METERS){
+        if (!model.METERS){
             check.setText("---yards selected---");
         }
 
@@ -134,7 +152,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup rGroup, int checkedId) {
                 if (meters.isChecked()) {
-                    Model.METERS = true;
+                    model.METERS = true;
                     check.setText("---meters selected---");
                     meters.setTextColor(Color.BLUE);
                     yards.setTypeface(null, Typeface.NORMAL);
@@ -142,7 +160,7 @@ public class HomeScreenActivity extends AppCompatActivity {
                     yards.setTextColor(Color.GRAY);
                 }
                 if (yards.isChecked()) {
-                    Model.METERS = false;
+                    model.METERS = false;
                     check.setText("---yards selected---");
                     yards.setTextColor(Color.BLUE);
                     yards.setTypeface(null, Typeface.BOLD);
@@ -215,7 +233,9 @@ public class HomeScreenActivity extends AppCompatActivity {
         Button adminMenuButton = (Button) findViewById(R.id.foodPage);
         adminMenuButton.setTextSize(myTextSize);
         adminMenuButton.setTextColor(color);
-        adminMenuButton.setText("FOOD");
+        adminMenuButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize + 10);
+        adminMenuButton.setText("ORDER F&B");
+        adminMenuButton.setTypeface(null, Typeface.BOLD);
         adminMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,24 +246,24 @@ public class HomeScreenActivity extends AppCompatActivity {
         });
 
 
-        setupAdminSwipe();
+
 
     }
 
-//    private class SetVariables extends AsyncTask<String, Void, String>{
-//        @Override
-//        protected String doInBackground(String... params){
+    private class SetVariables extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... params){
 //            Model model = new Model("long_lat_sdg.txt",
 //                    "hole_details.txt",
 //                    "polys.geojson",
 //                    getApplicationContext());
-//            return "aa";
-//        }
-//        @Override
-//        public void onPostExecute(String a) {
-//
-//        }
-//    }
+            return "aa";
+        }
+        @Override
+        public void onPostExecute(String a) {
+
+        }
+    }
 
     //to access admin settings
     //swipe left 7 times to get to admin settings
@@ -279,6 +299,10 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    public Context getContext(){
+        return getApplicationContext();
     }
 
 

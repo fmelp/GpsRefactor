@@ -24,6 +24,8 @@ public class AdminMenu extends AppCompatActivity {
 
 //    private String cartNumberString;
 
+    private final Model model = Model.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class AdminMenu extends AppCompatActivity {
 
 //show cart number
         TextView showNumber = (TextView) findViewById(R.id.cartNumberFinal);
-        showNumber.setText("CART #: " + Model.CART_NUMBER);
+        showNumber.setText("CART #: " + model.CART_NUMBER);
         showNumber.setTextSize(myTextSize + 30);
         showNumber.setTextColor(color);
 
@@ -46,7 +48,7 @@ public class AdminMenu extends AppCompatActivity {
         final RadioButton sirenOn = (RadioButton) findViewById(R.id.sirenRadio0);
         sirenOn.setText("ROMPERE");
         sirenOn.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize);
-        if (Model.SIREN_BOOL){
+        if (model.SIREN_BOOL){
             sirenOn.setTextColor(Color.BLUE);
             sirenOn.setTypeface(null, Typeface.BOLD);
             sirenOn.setChecked(true);
@@ -60,7 +62,7 @@ public class AdminMenu extends AppCompatActivity {
         final RadioButton sirenOff = (RadioButton) findViewById(R.id.sirenRadio1);
         sirenOff.setText("NON ROMPERE");
         sirenOff.setTextSize(TypedValue.COMPLEX_UNIT_SP, myTextSize);
-        if (Model.SIREN_BOOL){
+        if (model.SIREN_BOOL){
             sirenOff.setTextColor(Color.GRAY);
         }else{
             sirenOff.setTextColor(Color.BLUE);
@@ -78,21 +80,21 @@ public class AdminMenu extends AppCompatActivity {
                 if (sirenOn.isChecked()) {
 //                    Model.SIREN_BOOL = true;
                     //change siren boolean to true
-                    Model.changeSirenStatus();
+                    model.changeSirenStatus();
                     sirenOn.setTextColor(Color.BLUE);
                     sirenOff.setTypeface(null, Typeface.NORMAL);
                     sirenOn.setTypeface(null, Typeface.BOLD);
                     sirenOff.setTextColor(Color.GRAY);
-                    System.out.println("--------"+Model.SIREN_BOOL+"---------");
+                    System.out.println("--------"+model.SIREN_BOOL+"---------");
                 }
                 if (sirenOff.isChecked()) {
 //                    Model.SIREN_BOOL = false;
-                    Model.changeSirenStatus();
+                    model.changeSirenStatus();
                     sirenOff.setTextColor(Color.BLUE);
                     sirenOff.setTypeface(null, Typeface.BOLD);
                     sirenOn.setTextColor(Color.GRAY);
                     sirenOn.setTypeface(null, Typeface.NORMAL);
-                    System.out.println("--------" + Model.SIREN_BOOL + "---------");
+                    System.out.println("--------" + model.SIREN_BOOL + "---------");
                 }
 
 
